@@ -1,16 +1,21 @@
-
+import org.apache.flink.api.common.eventtime.WatermarkStrategy
 import org.apache.flink.api.common.typeinfo.Types
 import org.apache.flink.connector.datagen.source.DataGeneratorSource
-import org.apache.flink.connector.datagen.source.GeneratorFunction
+import org.apache.flink.streaming.api.datastream.DataStreamSource
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 
 
 fun main(args: Array<String>) {
-    val generatorFunction = GeneratorFunction<Long, String> { index -> "Number: $index" }
-    val numberOfRecords= 1000L
-    val source = DataGeneratorSource(generatorFunction, numberOfRecords, Types.STRING)
-    println("Hello World!")
+    val env = StreamExecutionEnvironment.createLocalEnvironment()
+    val numberOfRecords = 1000L
+    val source = DataGeneratorSource({ index: Long -> "Number: $index" }, numberOfRecords, Types.STRING)
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+    val stream: DataStreamSource<String> = env.fromSource(
+        source,
+        WatermarkStrategy.noWatermarks(),
+        "Generator Source"
+    )
+
+    stream.print()
+    env.execute()
 }

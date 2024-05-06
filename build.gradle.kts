@@ -22,6 +22,7 @@ repositories {
 dependencies {
     implementation("org.apache.flink:flink-streaming-java:$flinkVersion")
 //    implementation("org.apache.flink:flink-java:$flinkVersion")
+    implementation("org.apache.flink:flink-clients:${flinkVersion}")
 //    implementation("org.apache.flink:flink-connector-kafka:${flinkVersion}")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
