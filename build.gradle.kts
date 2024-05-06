@@ -12,7 +12,29 @@ java {
 group = "jyk"
 version = "1.0-SNAPSHOT"
 
-val flinkVersion = "1.19.0"
+val flinkVersion: String by project
+val flinkShadowJar = "flinkShadowJar"
+
+configurations {
+    create(flinkShadowJar) {
+        exclude(group = "org.apache.flink", module = "force-shading")
+        exclude(group = "com.google.code.findbugs", module = "jsr305")
+        exclude(group = "org.slf4j")
+        exclude(group = "org.apache.logging.log4j")
+    }
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.getByName(flinkShadowJar)
+        runtimeClasspath += configurations.getByName(flinkShadowJar)
+    }
+    test {
+        compileClasspath += configurations.getByName(flinkShadowJar)
+        runtimeClasspath += configurations.getByName(flinkShadowJar)
+    }
+
+}
 
 repositories {
     mavenCentral()
